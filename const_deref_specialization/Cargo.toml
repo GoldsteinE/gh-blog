@@ -1,0 +1,15 @@
+[package]
+name = "const_deref_specialization"
+version = "0.1.0"
+edition = "2021"
+build = "tango-build.rs"
+
+[dependencies]
+const-fnv1a-hash = "1"
+
+[build-dependencies]
+tango = "0.8.3"
+
+[lib]
+name = "const_deref_specialization"
+path = "src/lib.rs"

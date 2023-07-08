@@ -1,0 +1,7 @@
+/target
+/Cargo.lock
+
+# funny, yeah
+src/lib.rs
+
+tango.stamp

@@ -460,3 +460,7 @@ You can check that this still works outside of the crate by looking at [tests/co
 [@kanashimia]: https://github.com/kanashimia
 [@Kolsky]: https://github.com/Kolsky
 [@cpud36]: https://github.com/cpud36
+
+## Shameless self-promotion
+
+I post more stuff on my Telegram channel [Awful Rust snippets for fun and profit](https://t.me/terriblerust).

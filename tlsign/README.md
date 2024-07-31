@@ -1,5 +1,9 @@
 # The tale of tlsign: verifying archived TLS sessions
 
+YOU CAN’T DO IT
+
+The post will be updated with explananation why sometime in the future.
+
 All the code of the final implementation is available at [GoldsteinE/tlsign].
 
 [GoldsteinE/tlsign]: https://github.com/GoldsteinE/tlsign

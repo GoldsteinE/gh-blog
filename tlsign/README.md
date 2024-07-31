@@ -587,6 +587,10 @@ printf 'Verification success!\n'
   a signed file with another signed file from the same domain.
   I don’t think it *is* possible, and I didn’t manage to produce this issue, but I am not
   completely sure and any comments are welcome.
+  One point against the validity of my implementation is the existence of the [Signed HTTP Exchanges] spec.
+  Some smart people presumably considered this and found it to not be enough, so what’s the issue?
+  The spec mentions shorter signature lifespans as one of the motivations, but I don’t think
+  it’s relevant for e.g. the original case of generating previews.
 
 - I think that this approach may be worthwhile for the original problem (federating cached previews)
   with a bit of polishing.

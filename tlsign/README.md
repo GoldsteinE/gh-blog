@@ -1,4 +1,4 @@
-# The tale of tlsign
+# The tale of tlsign: verifying archived TLS sessions
 
 All the code of the final implementation is available at [GoldsteinE/tlsign].
 

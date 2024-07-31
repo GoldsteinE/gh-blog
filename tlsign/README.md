@@ -1,5 +1,9 @@
 # The tale of tlsign
 
+All the code of the final implementation is available at [GoldsteinE/tlsign].
+
+[GoldsteinE/tlsign]: https://github.com/GoldsteinE/tlsign
+
 ## Background
 
 While procrasinating on Lobsters, I encountered a post titled [Please Don’t Share Our Links on Mastodon][problem].
@@ -33,7 +37,7 @@ TLS uses a lot of random data, so we can’t just record `curl https://example.c
 it (or, rather, OpenSSL it uses to speak TLS) will generate new random numbers, so TLS will break.
 
 (This post is partly a chronicle of my failures; if you just want to read the final solution
-skip to [Why not just wrap curl?](#why-not-just-wrap-curl), and if you only want to see 
+skip to [Why not just wrap curl?](#why-not-just-wrap-curl), and if you only want to see
 the conclusion, skip to [Results and future work](#results-and-future-work)).
 
 ## Whatever, let’s just configure rustls so it uses our random numbers
@@ -578,6 +582,8 @@ printf 'Verification success!\n'
 ```
 
 ### Results and future work
+
+Once again, the code is available at [GoldsteinE/tlsign].
 
 - We successfully signed a webpage with its TLS session! Yay!
 

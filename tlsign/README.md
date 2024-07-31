@@ -583,7 +583,7 @@ printf 'Verification success!\n'
 
 ### Results and future work
 
-Once again, the code is available at [GoldsteinE/tlsign].
+Once again, the code is available at [GoldsteinE/tlsign]. Conclusions:
 
 - We successfully signed a webpage with its TLS session! Yay!
 

@@ -25,12 +25,16 @@ And so I plunged into a rabbit hole of trying to actually use these signatures.
 
 The idea is very simple: most websites support HTTPS. If you just record all the data sent between you and the website,
 you can then replay this record and so verify that the page was really served by this site.
-This approach works around a need to actually implement TLS, which I was very reluctant to do, because
-it’s famously complicated. We just record bytes and then reuse these bytes, no TLS understanding needed.
+This approach works around a need to actually implement TLS, which I was very reluctant to do because
+it’s famously complicated. We just record some bytes and then reuse these bytes, no TLS understanding needed.
 
 There’s one problem with this approach: it requires TLS implementation to be deterministic, which it normally isn’t.
 TLS uses a lot of random data, so we can’t just record `curl https://example.com` and then feed `curl` recorded data:
 it (or, rather, OpenSSL it uses to speak TLS) will generate new random numbers, so TLS will break.
+
+(This post is partly a chronicle of my failures; if you just want to read the final solution
+skip to [Why not just wrap curl?](#why-not-just-wrap-curl), and if you only want to see 
+the conclusion, skip to [Results and future work](#results-and-future-work)).
 
 ## Whatever, let’s just configure rustls so it uses our random numbers
 
@@ -53,8 +57,8 @@ to hack on *two* cryptography libraries.
 Thankfully, ring [allows you to pass `&dyn SecureRandom`][ring-random], so we can just implement
 it for our type and haha nope it’s sealed. Why is it sealed.
 
-I forked ring locally to unseal the trait and hacked on it for some more time, but after some
-more experimentation I realized that patching ring to use my random generator everywhere
+I forked ring locally to unseal the trait and hacked on it for some more time, but after
+further experimentation I realized that patching ring to use my random generator everywhere
 is slow, arduous and not very fun, so I took a step back.
 
 All these random generators are seeded from `getrandom()`, it would be much easier to just patch that.
@@ -63,10 +67,13 @@ All these random generators are seeded from `getrandom()`, it would be much easi
 [CryptoProvider]: https://docs.rs/rustls/0.23.12/rustls/crypto/struct.CryptoProvider.html
 [clock]: https://docs.rs/rustls/0.23.12/rustls/time_provider/trait.TimeProvider.html
 [source of randomness]: https://docs.rs/rustls/0.23.12/rustls/crypto/struct.CryptoProvider.html#structfield.secure_random
-[awc-ls-rs-ring]: https://github.com/rustls/rustls/blob/1177a465680cfac8c2a4b7217758d488d5d840c4/rustls/src/crypto/aws_lc_rs/mod.rs#L25-L32
+[awc-lc-rs-ring]: https://github.com/rustls/rustls/blob/1177a465680cfac8c2a4b7217758d488d5d840c4/rustls/src/crypto/aws_lc_rs/mod.rs#L25-L32
 [ring-random]: https://github.com/briansmith/ring/blob/7c0024abaf4fd59250c9b79cc41a029aa0ef3497/src/rsa/keypair.rs#L527
 
 ## Let’s just patch `getrandom()` and move on
+
+Patching `getrandom()` is trivial, so I won’t linger on this part here;
+I just wrote a little crate and used `patch.crates-io` to use it instead of the real `getrandom`.
 
 rustls doesn’t care about underlying transport. It accepts `impl Read + Write`
 (or even `impl Read` and `impl Write` separately)
@@ -195,7 +202,7 @@ for (;;) {
                 PTRACE_GET_SYSCALL_INFO, child,
                 sizeof(struct ptrace_syscall_info), &syscall_info
             );
-            // And exit if this failed:
+            // And exit if it failed:
             if (res == -1) {
                 perror("ptrace(PTRACE_GET_SYSCALL_INFO)");
                 return 1;
@@ -214,7 +221,7 @@ for (;;) {
 ```
 
 There’s one little weirdness here: by default there’s no way to distinguish a process
-that received `SIGTRAP` from a process that is paused because it hit a syscall.
+that received `SIGTRAP` from a process that paused because it hit a syscall.
 To fix this we need to set the `TRACESYSGOOD` option: it changes stop signal from
 `SIGTRAP` to `SIGTRAP|0x80`.
 The same option allows us to use `PTRACE_GET_SYSCALL_INFO`.
@@ -245,14 +252,14 @@ for (;;) {
 
 You may know that as “everything is a file” on Linux, the canonical source of randomness is `/dev/urandom` ([not `/dev/random`!][not-dev-random]).
 You may also know that that’s mostly a legacy interface and modern programs usually just use the `getrandom(2)` syscall.
-That’s very convenient for our purposes since we don’t need to detect reads from `/dev/urandom`:
-we can just patch a single syscall with a very simple interface.
+That’s very convenient for our purposes since this way we don’t need to detect reads from `/dev/urandom`:
+we can just patch a single syscall with a very simple interface:
 
 ```c
 ssize_t getrandom(void* buf, size_t buflen, unsigned int flags);
 ```
 
-Even better, we only care about two things: `buf` to write our random data and the return value,
+Even better, we only care about two things here: `buf` to write our random data and the return value,
 which signifies how many bytes kernel had written (we could also just ignore that and write `buflen` bytes).
 
 We want to write our bytes when syscall is about to return to the tracee so the kernel doesn’t overwrite
@@ -365,14 +372,14 @@ socat -r ltr.new -R rtl.new TCP-LISTEN:44444 \
     - < rtl > request
 ```
 
-and running the same curl command again:
+and run the same curl command again:
 
 ```console
 $ build/rwrapper curl --connect-to example.com:443:localhost:44444 https://example.com
 curl: (35) OpenSSL/3.0.14: error:0A0003E7:SSL routines::invalid session id
 ```
 
-...it never was going to be easy, was it?
+...it was never going to be easy, was it?
 
 
 ### Hunting for nondeterminism
@@ -382,12 +389,12 @@ There’re quite a few things that can go wrong here.
 One thing I mentioned before is time: I have no idea how TLS looks, but a lot of protocols use
 the current time somewhere, so maybe that’s the issue. I’ve made a list of all the syscalls curl
 uses and there was nothing time-related, but there was `clone3`: a syscall that spawns another
-process or threads. Multithreading is very bad for us: we only trace a single thread,
+process or thread. Multithreading is very bad for us: we only trace a single thread,
 and scheduling introduces an additional source of nondeterminism besides.
 I didn’t find how to disable multithreading in curl, so I switched to wget.
 
 wget didn’t spawn any new threads, nor did it query the current time, but the problem persisted.
-I started thinking about OpenSSL and randomness and remembered the writeup of the [Debian weak keys]
+I started thinking about OpenSSL and randomness and remembered a writeup of the [Debian weak keys]
 disaster:
 
 > The broken version of OpenSSL was being seeded only by process ID.
@@ -396,11 +403,11 @@ disaster:
 > big-endian 32bit (e.g. powerpc, sparc). PID 0 is the kernel and PID_MAX (32768)
 > is not reached when wrapping, so there were 32767 possible random number streams per architecture.
 > This is (2^15-1)*3 or 98301. 
-
-(from [Debian Wiki])
+>
+> *(from [Debian Wiki])*
 
 Sure, they fixed the vulnerability, but the random generator in OpenSSL is probably still seeded
-with process ID (and possibly other unrelated stuff).
+with the process ID (and possibly other unrelated stuff).
 
 We could hunt down all the data OpenSSL uses to seed its CSPRNG, or (and this is probably the best option)
 we could run the client in a more deterministic environment, but I didn’t want to spend too much time
@@ -446,7 +453,7 @@ That won’t work for IPv6, but extending it to IPv6 is trivial, so we won’t b
 int connect(int sockfd, const struct sockaddr *addr, socken_t addrlen);
 ```
 
-The interesting part is `addr`: we can read it to check if it looks like an HTTPS
+The interesting part is `addr`: we can read it to check if it looks like a HTTPS
 connection and then overwrite it with a new address.
 All these things need to happen on syscall entry, before the kernel can read the address.
 
@@ -587,10 +594,15 @@ printf 'Verification success!\n'
   a signed file with another signed file from the same domain.
   I don’t think it *is* possible, and I didn’t manage to produce this issue, but I am not
   completely sure and any comments are welcome.
+
   One point against the validity of my implementation is the existence of the [Signed HTTP Exchanges] spec.
   Some smart people presumably considered this and found it to not be enough, so what’s the issue?
   The spec mentions shorter signature lifespans as one of the motivations, but I don’t think
   it’s relevant for e.g. the original case of generating previews.
+
+  One possible hardening measure here is to prevent the attacker from tinkering with seeds:
+  if, for example, we say that the seed is always hash of the URL, it would be harder to somehow mix
+  different sessions into a one fake frankensession.
 
 - I think that this approach may be worthwhile for the original problem (federating cached previews)
   with a bit of polishing.

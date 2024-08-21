@@ -93,7 +93,9 @@ and pass it as an outparam:
 
 ```rust
 pub async fn connect_ws(
-    local_addr: SocketAddr, host: &str, progress: &mut ConnectionProgress,
+    local_addr: SocketAddr,
+    host: &str,
+    progress: &mut ConnectionProgress,
 ) -> Result<WebSocket> {
     let peer_addr = resolve(host)?;
     progress.peer_addr = Some(peer_addr);

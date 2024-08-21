@@ -56,7 +56,7 @@ pub async fn connect_ws(local_addr: SocketAddr, host: &str) -> Result<WebSocket>
 }
 ```
 
-It kinda works, but it’s extremely repetitive and fails to accomodate our next requirement:
+It kinda works, but it’s extremely repetitive and fails to accommodate our next requirement:
 we want to be able to wrap our connection in `timeout()` while retaining information on which
 particular operation timed out. As `timeout()` creates a new error, it doesn’t retain
 any additional info we painstakingly added.

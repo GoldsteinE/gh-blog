@@ -80,7 +80,6 @@ That’s even more cumbersome and still isn’t compatible with timeouts)
 Instead of trying to stuff all the info into an error, let’s make a separate type:
 
 ```rust
-#[non_exhaustive]
 #[derive(Default)]
 pub struct ConnectionProgress {
     pub local_addr: Option<SocketAddr>,
@@ -216,9 +215,14 @@ especially Zig (which doesn’t allow you to pass extra data in first-class erro
 or C (which doesn't have first-class errors, so you kinda can do tagged unions, but mostly people just use error codes)
 or languages that use exceptions (so you can avoid having to catch and rethrow all the time).
 
+This is not really suitable for a public API. You should probably hide it behind a nicer API
+that handles timeouts, retries, and logging, without exposing the user to `ConnectionProgress`.
+(thanks to [@LennyLizowzskiy] for pointing out this wasn’t clear)
+
 I’m most certainly not the first person to think of this, but I’ve never actually seen anything
 written about this pattern, so I decided to write it down here.
 
 Thanks to [@WaffleLapkin] for proofreading this post!
 
 [@WaffleLapkin]: https://github.com/WaffleLapkin/
+[@LennyLizowzskiy]: https://github.com/LennyLizowzskiy

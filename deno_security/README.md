@@ -212,6 +212,7 @@ I disagree: Deno permissions give a false sense of security and can lure someone
 It’s possible that you can use Deno sandboxing safely if you:
 
 - never use more dangerous permissions like `--allow-run`, even with `=cmd`,
+- that includes `--allow-env`, even `--allow-env=VAR`, for setting environment variables is memory unsafe and can affect libc functions,
 - preferrably run with `--no-prompt` so your terminal can’t be tricked,
 - are careful about symlinks in directories you `--allow-{read,write}` to,
 - are not concerned with resource exhaustion: there’re zero permissions required to burn CPU or allocate memory.

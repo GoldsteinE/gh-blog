@@ -214,7 +214,7 @@ It’s possible that you can use Deno sandboxing safely if you:
 - never use more dangerous permissions like `--allow-run`, even with `=cmd`,
 - preferrably run with `--no-prompt` so your terminal can’t be tricked,
 - are careful about symlinks in directories you `--allow-{read,write}` to,
-- are not concerned with resource exhaustion because there’re zero permissions reqiured to burn CPU or allocate memory.
+- are not concerned with resource exhaustion: there’re zero permissions required to burn CPU or allocate memory.
 
 In particular, you may be safe if you’re running untrusted code with no permissions at all
 in a non-interactive context and use some other mechanism to control resource consumption.

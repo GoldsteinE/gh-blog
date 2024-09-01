@@ -41,7 +41,7 @@ will display a nice little prompt in the terminal:
 and you can grant or refuse it.
 
 (Aside: I really miss this feature in browser extensions. Currently, if your extension needs _potential_
-access to _any_ website, it needs to request _actual_ access to _all_ the websites, which is less then ideal)
+access to _any_ website, it needs to request _actual_ access to _all_ the websites, which is less than ideal)
 
 If you like puzzles, this is the point where you can stop and think about what could go wrong with this system.
 

@@ -25,6 +25,9 @@ and some bad sides. Overall I’m pretty happy with it, but here’s some specif
   [fw-fanctrl] helps somewhat (although you can’t use it with Secure Boot because of its kinda
   cursed implementation), but overall it’s just a problem of “CPU heats a lot, so it needs a lot
   of cooling”. This heat also makes the bottom panel quite hot, but I’m not really bothered by this.
+  One non-obvious thing is that fans make a really high-pitched sound, which is the most annoying
+  fan sound of any laptop I had. I didn’t previously consider fan sound differences to be noticeable,
+  but they definitely are.
 
   [fw-fanctrl]: https://github.com/TamtamHero/fw-fanctrl/
 

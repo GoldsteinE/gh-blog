@@ -22,7 +22,7 @@ and some bad sides. Overall I’m pretty happy with it, but here’s some specif
 
 * **The coolers**: they’re fucking loud.
 
-  [fw-fanctrl] helps somewhat (although you can’t use it with Secure Boot because of its somewhat
+  [fw-fanctrl] helps somewhat (although you can’t use it with Secure Boot because of its kinda
   cursed implementation), but overall it’s just a problem of “CPU heats a lot, so it needs a lot
   of cooling”. This heat also makes the bottom panel quite hot, but I’m not really bothered by this.
 

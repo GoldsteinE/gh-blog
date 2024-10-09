@@ -57,6 +57,12 @@ and some bad sides. Overall I’m pretty happy with it, but here’s some specif
 
   [spacers]: https://www.printables.com/model/804797-framework-laptop-16-trackpad-spacer
 
+* **The connectivity issues**: sometimes ports randomly disappear until reboot. I’m not the only one having this issue,
+  [other people][flaky] have reported port flakiness, especially with ports 5 and 6. I’m not sure how
+  often does this happen.
+
+  [flaky]: https://community.frame.work/t/some-expansion-ports-are-flaky/55249
+
 * **The battery life**: I have kind of a low bar here, but 85W is enough for me. It’s actually a bit
   higher than advertised: right now my battery indicator shows 106.52% charge. I think you can use it
   for quite a long time with proper power-saving mode, but I haven’t gotten around to configuring that.

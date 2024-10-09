@@ -58,7 +58,7 @@ and some bad sides. Overall I’m pretty happy with it, but here’s some specif
   [spacers]: https://www.printables.com/model/804797-framework-laptop-16-trackpad-spacer
 
 * **The connectivity issues**: sometimes ports randomly disappear until reboot. I’m not the only one having this issue,
-  [other people][flaky] have reported port flakiness, especially with ports 5 and 6. I’m not sure how
+  other peopleflaky [have reported port flakiness][flaky], especially with ports 5 and 6. I’m not sure how
   often does this happen.
 
   [flaky]: https://community.frame.work/t/some-expansion-ports-are-flaky/55249

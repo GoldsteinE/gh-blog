@@ -70,6 +70,7 @@ and some bad sides. Overall I’m pretty happy with it, but here’s some specif
 
 * **The speakers**: they’re okay. It’s not MacBook, but it’s not awful. Linux compatibility mode in UEFI +
   [easyeffects setup from Arch Wiki][easyeffects] makes it a lot better.
+  Sometimes they don’t instantly initialize and there’re weird effects when audio starts playing, not sure if it’s hardware or software issue.
 
   [easyeffects]: https://wiki.archlinux.org/title/Framework_Laptop_16#Easy_Effects
 

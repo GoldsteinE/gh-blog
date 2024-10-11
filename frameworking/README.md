@@ -37,6 +37,7 @@ and some bad sides. Overall I’m pretty happy with it, but here’s some specif
   Keys on the macropad are somewhat worse, you can feel them bending if you press hard enough, and they’re
   not really even, but I don’t type on it for extended periods of time, so whatever. Everything is QMK,
   so that’s fun.
+  **UPD** though: one of the keys (the one that’s normally Fn) started feeling weird already (it’s kinda a bit harder to press and it feels like it can get stuck), so I really hope it won’t break that fast.
 
 * **The fingerprint reader**: it actually works every time. That wasn’t the case on my ThinkPad.
 
